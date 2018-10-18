@@ -1,0 +1,53 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "prometheus.nginx.fullname" . }}
+  labels:
+    app: {{ template "prometheus.name" . }}
+    chart: {{ template "prometheus.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "prometheus.name" . }}
+      chart: {{ template "prometheus.version" . }}
+      release: {{ .Release.Name }}
+      component: nginx
+  template:
+    metadata:
+      labels:
+        app: {{ template "prometheus.name" . }}
+        chart: {{ template "prometheus.version" . }}
+        release: {{ .Release.Name }}
+        component: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: docker-registry.saicstack.com/rancher/nginx:1.15.2
+        args:
+        - nginx
+        - -g
+        - daemon off;
+        - -c
+        - /nginx/nginx.conf
+        volumeMounts:
+        - mountPath: /nginx/
+          name: prometheus-nginx
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+      volumes:
+      - name: prometheus-nginx
+        configMap:
+          defaultMode: 438
+          items:
+          - key: nginx.conf
+            mode: 438
+            path: nginx.conf
+          name: {{ template "prometheus.nginx.fullname" . }}
+
+{{- end }}

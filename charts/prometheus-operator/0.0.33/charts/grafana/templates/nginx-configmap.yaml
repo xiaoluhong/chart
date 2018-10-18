@@ -1,0 +1,42 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "grafana.nginx.fullname" . }}
+  labels:
+    app: {{ template "grafana.name" . }}
+    chart: {{ template "grafana.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+data:
+  nginx.conf: |-
+    user  nginx;
+    worker_processes  auto;
+    error_log  /dev/null warn;
+    pid        /var/run/nginx.pid;
+    events {
+        worker_connections  1024;
+    }
+    http {
+      server {
+        access_log  off;
+        
+        listen 80;
+        gzip on;
+        gzip_min_length 1k;
+        gzip_comp_level 2;
+        gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+        gzip_vary on;
+        gzip_disable "MSIE [1-6]\.";
+        include /etc/nginx/mime.types;
+
+        location / {
+          proxy_pass http://localhost:3000/;
+          # sub_filter_types text/html;
+          sub_filter '<base href="/k8s/clusters/{{ .Values.rancherClusterId }}/api/v1/namespaces/{{ .Release.Namespace }}/services/http:{{ template "grafana.nginx.dnsname" . }}:80/proxy/" />' '<base href="/" />';
+        }
+      }
+    }
+
+
+{{- end }}

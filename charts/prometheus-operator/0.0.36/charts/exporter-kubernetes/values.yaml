@@ -1,0 +1,23 @@
+## CRD apiGroup
+##
+apiGroup: "monitoring.coreos.com"
+
+## Using default rules which are in templates/kubernetes.rules.yaml
+##
+enabledDefaultPrometheusRules: true
+
+## Custome rules
+##
+prometheusRules: []
+
+## Skip verification until we have resolved why the certificate validation
+## for the kubelet on API server nodes fail.
+##
+insecureSkipVerify: true
+
+## Custom Labels to be added to ServiceMonitor
+##
+additionalServiceMonitorLabels: {}
+##Custom Labels to be added to Prometheus Rules CRD
+##
+additionalRulesLabels: {}

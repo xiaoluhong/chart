@@ -1,0 +1,20 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "grafana.nginx.dnsname" . }}
+  labels:
+    app: {{ template "grafana.name" . }}
+    chart: {{ template "grafana.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: {{ template "grafana.name" . }}
+    release: {{ .Release.Name }}
+{{- end }}

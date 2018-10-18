@@ -1,0 +1,256 @@
+categories:
+- Monitoring
+questions:
+# Docker image configurations
+- variable: defaultImage
+  default: "true"
+  description: "Use default Docker image"
+  label: Use Default Image
+  type: boolean
+  show_subquestion_if: false
+  group: "Container Images"
+  subquestions:
+  - variable: operator.image.repository
+    default: "docker-registry.saicstack.com/rancher/prometheus-operator"
+    description: "Operator image repository"
+    type: string
+    label: Operator image repository
+  - variable: operator.image.tag
+    default: "v0.23.2"
+    description: "Operator image tag"
+    type: string
+    label: Operator image tag
+  - variable: operator.prometheusConfigReloader.repository
+    default: "docker-registry.saicstack.com/rancher/prometheus-config-reloader"
+    description: Prometheus configuration reloader image repository
+    type: string
+    label: Prometheus configuration reloader image repository
+  - variable: operator.prometheusConfigReloader.tag
+    default: "v0.23.2"
+    description: Prometheus configuration reloader image tag
+    type: string
+    label: Prometheus configuration reloader image tag
+  - variable: operator.configmapReload.repository
+    default: "docker-registry.saicstack.com/rancher/configmap-reload"
+    description: "Configmap reolader image repository"
+    type: string
+    label: Configmap reolader image repository
+  - variable: operator.configmapReload.tag
+    default: "v0.0.1"
+    description: Configmap reolader image tag
+    type: string
+    label: Configmap reolader image tag
+  - variable: operator.global.hyperkube.repository
+    default: "docker-registry.saicstack.com/rancher/hyperkube"
+    description: Kubectl operator image repository
+    type: string
+    label: Kubectl operator image repository
+  - variable: operator.global.hyperkube.tag
+    default: "v1.10.4_coreos.0"
+    description: Kubectl operator image tag
+    type: string
+    label: Kubectl operator image tag
+  - variable: alertmanager.image.repository
+    default: "docker-registry.saicstack.com/rancher/alertmanager"
+    description: Alertmanager image repository
+    type: string
+    label: Alertmanager image repository
+  - variable: alertmanager.image.tag
+    default: "v0.15.1"
+    description: Alertmanager image tag
+    type: string
+    label: Alertmanager image tag
+  - variable: prometheus.image.repository
+    default: "docker-registry.saicstack.com/rancher/prometheus"
+    description: Prometheus server image repository
+    type: string
+    label: Prometheus server image repository
+  - variable: prometheus.image.tag
+    default: "v2.2.1"
+    description: Prometheus server image tag
+    type: string
+    label: Prometheus server image tag
+  - variable: grafana.image.repository
+    default: "docker-registry.saicstack.com/rancher/grafana"
+    description: Grafana server image repository
+    type: string
+    label: Grafana server image repository
+  - variable: grafana.image.tag
+    default: "5.2.3"
+    description: Grafana server image tag
+    type: string
+    label: Grafana server image tag
+  - variable: grafana.grafanaWatcher.repository
+    default: "docker-registry.saicstack.com/rancher/grafana-watcher"
+    description: Grafana watcher image repository
+    type: string
+    label: Grafana watcher image repository
+  - variable: grafana.grafanaWatcher.tag
+    default: "v0.0.8"
+    description: Grafana watcher image tag
+    type: string
+    label: Grafana watcher image tag
+  - variable: grafana.grafanaProxy.repository
+    default: "docker-registry.saicstack.com/rancher/nginx"
+    description: Grafana proxy image repository
+    type: string
+    label: Grafana proxy image repository
+  - variable: grafana.grafanaProxy.tag
+    default: "1.15.2"
+    description: Grafana proxy image tag
+    type: string
+    label: Grafana proxy image tag
+  - variable: exporter-node.image.repository
+    default: "docker-registry.saicstack.com/rancher/node-exporter"
+    description: Node-exporter image repository
+    type: string
+    label: Node-exporter image repository
+  - variable: exporter-node.image.tag
+    default: "v0.16.0"
+    description: Node-exporter image tag
+    type: string
+    label: Node-exporter image tag
+  - variable: exporter-kube-state.kube_state_metrics.image.repository
+    default: "docker-registry.saicstack.com/rancher/kube-state-metrics"
+    description: Kube-state metrics exporter image repository
+    type: string
+    label: Kube-state metrics exporter image repository
+  - variable: exporter-kube-state.kube_state_metrics.image.tag
+    default: "v1.4.0"
+    description: Kube-state metrics exporter image tag
+    type: string
+    label: Kube-state metrics exporter image tag
+  - variable: exporter-kube-state.addon_resizer.image.repository
+    default: "docker-registry.saicstack.com/rancher/addon-resizer"
+    description: Kube-state metrics exporter resizer image repository
+    type: string
+    label: Kube-state metrics exporter resizer image repository
+  - variable: exporter-kube-state.addon_resizer.image.tag
+    default: "1.8.1"
+    description: Kube-state metrics exporter resizer image tag
+    type: string
+    label: Kube-state metrics exporter resizer image tag
+- variable: exporter-kubelets.https
+  default: true
+  description: "Use https or not"
+  type: boolean
+  label: Kubelets Exporter Endpoint Protocol (set to false for GKE)
+  group: "Exporter Settings"
+  required: true
+- variable: exporter-node.port
+  default: "9100"
+  description: "Also expose as host port"
+  type: int
+  label: Node Exporter Listening Port
+  group: "Exporter Settings"
+  required: true
+- variable: grafana.ingress.enabled
+  default: false
+  description: "Expose grafana app using Layer 7 Load Balancer - ingress"
+  type: boolean
+  label: Expose Grafana App Using Layer 7 Load Balancer
+  show_subquestion_if: true
+  group: "Grafana Settings"
+  subquestions:
+  - variable: grafana.ingress.hosts[0]
+    default: "xip.io"
+    description: "ingress hostname"
+    type: hostname
+    required: true
+    label: Hostname
+- variable: grafana.persistence.enabled
+  default: "false"
+  description: "Enable persistent volume for Grafana"
+  type: boolean
+  required: true
+  label: Grafana Persistent Volume Enabled
+  show_subquestion_if: true
+  group: "Grafana Settings"
+  subquestions:
+  - variable: grafana.persistence.size
+    default: "10Gi"
+    description: "Grafana Persistent Volume Size"
+    type: string
+    label: Grafana Volume Size
+  - variable: grafana.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for Grafana
+- variable: grafana.rancherClusterId
+  default: ""
+  description: "The cluster id of current k8s cluster"
+  type: string
+  required: true
+  label: "K8s Cluster ID"
+  group: "Grafana Settings"
+- variable: prometheus.ingress.enabled
+  default: false
+  description: "Expose prometheus app using Layer 7 Load Balancer - ingress"
+  type: boolean
+  label: Expose Prometheus App Using Layer 7 Load Balancer
+  show_subquestion_if: true
+  group: "Prometheus Settings"
+  subquestions:
+  - variable: prometheus.ingress.hosts[0]
+    default: "xip.io"
+    description: "ingress hostname"
+    type: hostname
+    required: true
+    label: Hostname
+- variable: prometheus.persistence.enabled
+  default: false
+  description: "Enable persistent volume for Prometheus"
+  type: boolean
+  required: true
+  label: Prometheus Persistent Volume Enabled
+  show_subquestion_if: true
+  group: "Prometheus Settings"
+  subquestions:
+  - variable: prometheus.persistence.size
+    default: "10Gi"
+    description: "Prometheus Persistent Volume Size"
+    type: string
+    label: Prometheus Volume Size
+  - variable: prometheus.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for Prometheus
+- variable: alertmanager.ingress.enabled
+  default: false
+  description: "Expose alertmanager app using Layer 7 Load Balancer - ingress"
+  type: boolean
+  label: Expose Alertmanager App Using Layer 7 Load Balancer
+  show_subquestion_if: true
+  group: "Alertmanager Settings"
+  show_if: "alertmanager.enabled=true"
+  subquestions:
+  - variable: alertmanager.ingress.hosts[0]
+    default: "xip.io"
+    description: "ingress hostname"
+    type: hostname
+    required: true
+    label: Hostname
+    show_if: "alertmanager.enabled=true"
+- variable: alertmanager.persistence.enabled
+  default: "false"
+  description: "Enable persistent volume for Alertmanager"
+  type: boolean
+  required: true
+  label: Alertmanager Persistent Volume Enabled
+  show_subquestion_if: true
+  group: "Alertmanager Settings"
+  show_if: "alertmanager.enabled=true"
+  subquestions:
+  - variable: alertmanager.persistence.size
+    default: "10Gi"
+    description: "Alertmanager Persistent Volume Size"
+    type: string
+    label: Alertmanager Volume Size
+  - variable: alertmanager.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for Alertmanager
+

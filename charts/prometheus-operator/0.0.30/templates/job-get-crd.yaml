@@ -1,0 +1,46 @@
+{{- $apiGroup := include "prometheus-operator.apiGroup" . -}}
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    helm.sh/hook: post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    app: {{ template "prometheus-operator.name" . }}
+    chart: {{ template "prometheus-operator.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "prometheus-operator.get-crd-job.fullname" . }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ template "prometheus-operator.name" . }}
+        chart: {{ template "prometheus-operator.version" . }}
+        release: {{ .Release.Name }}
+      name: {{ template "prometheus-operator.get-crd-job.fullname" . }}
+    spec:
+      containers:
+        - name: hyperkube
+          image: "{{ .Values.operator.global.hyperkube.repository }}:{{ .Values.operator.global.hyperkube.tag }}"
+          imagePullPolicy: "{{ .Values.operator.global.hyperkube.pullPolicy }}"
+          command:
+            - ./kubectl
+            - get
+            - customresourcedefinitions
+            - alertmanagers.{{ $apiGroup }}
+            - prometheuses.{{ $apiGroup }}
+            - servicemonitors.{{ $apiGroup }}
+      restartPolicy: OnFailure
+    {{- if .Values.operator.rbacEnable }}
+      serviceAccountName: {{ template "prometheus-operator.fullname" . }}
+    {{- end }}
+    {{- if .Values.operator.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.operator.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if .Values.operator.tolerations }}
+      tolerations:
+{{ toYaml .Values.operator.tolerations | indent 8 }}
+    {{- end }}

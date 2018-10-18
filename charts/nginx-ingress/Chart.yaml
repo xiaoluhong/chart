@@ -1,0 +1,16 @@
+name: nginx-ingress
+version: 0.1.1
+appVersion: 1.2.0
+description: NGINX Ingress Controller with NGINX and NGINX Plus
+icon: https://cdn-1.wp.nginx.com/wp-content/themes/nginx-theme/assets/img/pricing-page/pricing-NGINX-Plus.png
+sources:
+  - https://github.com/nginxinc/kubernetes-ingress/tree/master/helm-chart
+keywords:
+  - ingress
+  - nginx
+maintainers:
+  - name: Damian Curry
+    email: damian.curry@nginx.com
+  - name: Dean Coakley
+    email: dean.coakley@nginx.com
+

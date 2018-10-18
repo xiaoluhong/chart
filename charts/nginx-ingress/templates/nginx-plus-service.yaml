@@ -1,0 +1,32 @@
+{{- if .Values.controller.nginxplus }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-plus-service
+  labels:
+    app: {{ .Values.controller.name | trunc 63 }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+{{- if .Values.service.nginxplus.annotations }}
+  annotations:
+{{ toYaml .Values.service.nginxplus.annotations | indent 4 }}
+{{- end }}
+spec:
+{{- if or (eq .Values.service.nginxplus.type "LoadBalancer") (eq .Values.service.nginxplus.type "NodePort") }}
+  {{- if .Values.service.ingress.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.service.nginxplus.externalTrafficPolicy }}
+  {{- end }}
+{{- end }}
+  type: {{ .Values.service.nginxplus.type }}
+  ports:
+    - name: http
+      port: 8080
+      targetPort: web
+      {{- if (and (eq .Values.service.nginxplus.type "NodePort") (not (empty .Values.service.nginxplus.nodePort)))}}
+      nodePort: {{ .Values.service.nginxplus.nodePort }}
+      {{- end }}
+  selector:
+    app: {{ .Values.controller.name | trunc 63 }}
+{{- end }}
+

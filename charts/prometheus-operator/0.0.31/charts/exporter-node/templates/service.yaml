@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "exporter-node.dnsname" . }}
+  labels:
+    app: {{ template "exporter-node.name" . }}
+    chart: {{ template "exporter-node.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+{{- if .Values.enableDaemonSet }}
+  type: {{ .Values.service.type }}
+  ports:
+  - name: metrics
+    port: {{ .Values.service.externalPort }}
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app: {{ template "exporter-node.name" . }}
+    release: {{ .Release.Name }}
+{{- else }}
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: metrics
+    port: {{ .Values.service.externalPort }}
+    protocol: TCP
+    targetPort: metrics
+{{- end }}

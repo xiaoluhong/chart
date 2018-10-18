@@ -1,0 +1,72 @@
+categories:
+- ingress
+labels:
+  io.rancher.certified: partner
+questions:
+- variable: defaultImage
+  default: false
+  description: "Use default Docker image"
+  label: Use Default Image
+  type: boolean
+  show_subquestion_if: false
+  group: "Container Images"
+  required: true
+  subquestions:
+  - variable: controller.image.repository
+    default: "nginx/nginx-ingress"
+    description: "The image repository of the Ingress controller."
+    type: string
+    label: NGINX Ingress Image Repository(Must be your private registry for Nginx Plus)
+    required: true
+  - variable: controller.image.tag
+    default: "1.2.0"
+    description: "NGINX Plus image tag"
+    type: string
+    label: NGINX Ingress Image Tag
+    required: true
+- variable: controller.nginxplus
+  default: true
+  description: "Deploys the Ingress controller for NGINX Plus."
+  type: boolean
+  label: Deploys NGINX Plus
+  group: "NGINX Ingress Settings"
+  required: true
+- variable: controller.kind
+  default: "deployment"
+  description: "The kind of the Ingress controller installation - deployment or daemonset."
+  type: enum
+  label: The kind of the Ingress Controller Installation
+  group: "NGINX Ingress Settings"
+  required: true
+  options:
+    - "deployment"
+    - "daemonset"
+- variable: service.ingress.type
+  default: "LoadBalancer"
+  description: "The type of service to create for the Ingress controller."
+  type: enum
+  label: NGINX Ingress Service Type
+  group: "NGINX Ingress Settings"
+  required: true
+  options:
+    - "NodePort"
+    - "LoadBalancer"
+- variable: prometheus.create
+  default: false
+  description: "Deploys a Prometheus exporter container within the Ingress controller pod. Requires NGINX Plus. controller.nginxplus must be set to true."
+  label: Deploys a Prometheus Exporter of Nginx Ingress
+  type: boolean
+  show_subquestion_if: true
+  show_if: "controller.nginxplus=true"
+  group: "Prometheus Exporter"
+  subquestions:
+  - variable: prometheus.image.repository
+    default: "nginx/nginx-prometheus-exporter"
+    description: "Prometheus exporter image name"
+    type: string
+    label: Prometheus Exporter Image Name
+  - variable: prometheus.image.tag
+    default: "0.1.0"
+    description: "Prometheus exporter image tag"
+    type: string
+    label: Prometheus Exporter Image Tag

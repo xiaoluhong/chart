@@ -1,0 +1,28 @@
+dependencies:
+  - name: alertmanager
+    version: 0.1.2
+    condition: alertmanager.enabled
+
+  - name: prometheus
+    version: 0.0.44
+    condition: prometheus.enabled
+
+  - name: grafana
+    version: 0.0.35
+    condition: grafana.enabled
+
+  - name: exporter-kube-state
+    version: 0.2.3
+    condition: deployKubeState
+
+  - name: exporter-kubelets
+    version: 0.2.10
+    condition: exporter-kubelets.enabled
+
+  - name: exporter-kubernetes
+    version: 0.1.9
+    condition: deployKubernetes
+
+  - name: exporter-node
+    version: 0.3.2
+    condition: deployNodeExporter

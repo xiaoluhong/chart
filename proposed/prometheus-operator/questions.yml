@@ -1,0 +1,140 @@
+categories:
+- Monitoring
+questions:
+# Docker image configurations
+- variable: defaultImage
+  default: "true"
+  description: "Use default Docker image"
+  label: Use Default Image
+  type: boolean
+  show_subquestion_if: false
+  group: "Container Images"
+- variable: exporter-kubelets.https
+  default: true
+  description: "Kubelets exporter endpoint, set to false for GKE"
+  type: boolean
+  label: Kubelets Exporter Endpoint (set to false for GKE)
+  group: "Exporter Settings"
+  required: true
+- variable: grafana.ingress.enabled
+  default: "true"
+  description: "Expose grafana app using Layer 7 Load Balancer - ingress"
+  type: boolean
+  label: Expose Grafana App Using Layer 7 Load Balancer
+  show_subquestion_if: true
+  group: "Grafana Settings"
+  subquestions:
+  - variable: grafana.ingress.hosts[0]
+    default: "xip.io"
+    description: "ingress hostname"
+    type: hostname
+    required: true
+    label: Hostname
+- variable: grafana.persistence.enabled
+  default: "false"
+  description: "Enable persistent volume for Grafana"
+  type: boolean
+  required: true
+  label: Grafana Persistent Volume Enabled
+  show_subquestion_if: true
+  group: "Grafana Settings"
+  subquestions:
+  - variable: grafana.persistence.size
+    default: "10Gi"
+    description: "Grafana Persistent Volume Size"
+    type: string
+    label: Grafana Volume Size
+  - variable: grafana.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for Grafana
+- variable: prometheus.ingress.enabled
+  default: "true"
+  description: "Expose prometheus app using Layer 7 Load Balancer - ingress"
+  type: boolean
+  label: Expose Prometheus App Using Layer 7 Load Balancer
+  show_subquestion_if: true
+  group: "Prometheus Settings"
+  subquestions:
+  - variable: prometheus.ingress.hosts[0]
+    default: "xip.io"
+    description: "ingress hostname"
+    type: hostname
+    required: true
+    label: Hostname
+- variable: alertmanager.ingress.enabled
+  default: "true"
+  description: "Expose alertmanager app using Layer 7 Load Balancer - ingress"
+  type: boolean
+  label: Expose Alertmanager App Using Layer 7 Load Balancer
+  show_subquestion_if: true
+  group: "Alertmanager Settings"
+  show_if: "alertmanager.enabled=true"
+  subquestions:
+  - variable: alertmanager.ingress.hosts[0]
+    default: "xip.io"
+    description: "ingress hostname"
+    type: hostname
+    required: true
+    label: Hostname
+    show_if: "alertmanager.enabled=true"
+- variable: prometheus.service.type
+  default: "NodePort"
+  description: "Prometheus Service type"
+  type: enum
+  show_if: "prometheus.ingress.enabled=false"
+  options:
+    - "ClusterIP"
+    - "NodePort"
+  label: Prometheus Service Type
+  show_subquestion_if: "NodePort"
+  group: "Prometheus Settings"
+  subquestions:
+  - variable: prometheus.service.nodePort
+    default: ""
+    description: "NodePort http port(to set explicitly, choose port between 30000-32767)"
+    type: int
+    min: 30000
+    max: 32767
+    label: Prometheus NodePort Http Port
+    show_if: "prometheus.ingress.enabled=false"
+- variable: prometheus.persistence.enabled
+  default: "false"
+  description: "Enable persistent volume for Prometheus"
+  type: boolean
+  required: true
+  label: Prometheus Persistent Volume Enabled
+  show_subquestion_if: true
+  group: "Prometheus Settings"
+  subquestions:
+  - variable: prometheus.persistence.size
+    default: "10Gi"
+    description: "Prometheus Persistent Volume Size"
+    type: string
+    label: Prometheus Volume Size
+  - variable: prometheus.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for Prometheus
+- variable: alertmanager.persistence.enabled
+  default: "false"
+  description: "Enable persistent volume for Alertmanager"
+  type: boolean
+  required: true
+  label: Alertmanager Persistent Volume Enabled
+  show_subquestion_if: true
+  group: "Alertmanager Settings"
+  show_if: "alertmanager.enabled=true"
+  subquestions:
+  - variable: alertmanager.persistence.size
+    default: "10Gi"
+    description: "Alertmanager Persistent Volume Size"
+    type: string
+    label: Alertmanager Volume Size
+  - variable: alertmanager.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for Alertmanager

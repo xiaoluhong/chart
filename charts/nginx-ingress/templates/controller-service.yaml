@@ -1,0 +1,33 @@
+{{- if .Values.service.ingress.create }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress
+  labels:
+    app: {{ .Values.controller.name | trunc 63 }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+{{- if .Values.service.ingress.annotations }}
+  annotations:
+{{ toYaml .Values.service.ingress.annotations | indent 4 }}
+{{- end }}
+spec:
+{{- if or (eq .Values.service.ingress.type "LoadBalancer") (eq .Values.service.ingress.type "NodePort") }}
+  {{- if .Values.service.ingress.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.service.ingress.externalTrafficPolicy }}
+  {{- end }}
+{{- end }}
+  type: {{ .Values.service.ingress.type }}
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: {{ .Values.controller.name | trunc 63 }}
+{{- end }}

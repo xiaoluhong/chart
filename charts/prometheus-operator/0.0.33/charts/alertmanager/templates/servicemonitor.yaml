@@ -1,0 +1,29 @@
+{{- if .Values.enabled }}
+{{- if .Values.selfServiceMonitor }}
+apiVersion: {{ template "prometheus-operator.apiVersion" . }}
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: {{ template "alertmanager.name" . }}
+    chart: {{ template "alertmanager.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    {{- if .Values.additionalServiceMonitorLabels }}
+{{ toYaml .Values.additionalServiceMonitorLabels | indent 4 }}
+    {{- end }}
+  name: {{ template "alertmanager.fullname" . }}
+spec:
+  jobLabel: altermanager
+  selector:
+    matchLabels:
+      app: {{ template "alertmanager.name" . }}
+      chart: {{ template "alertmanager.version" . }}
+      release: {{ .Release.Name }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace | quote }}
+  endpoints:
+  - port: http
+    interval: 30s
+{{- end }}
+{{- end }}
