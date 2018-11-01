@@ -1,0 +1,35 @@
+dependencies:
+  - name: alertmanager
+    version: 0.1.8
+    condition: alertmanager.enabled
+    repository: "file://./charts/alertmanager/"
+
+  - name: prometheus
+    version: 0.0.52
+    condition: prometheus.enabled
+    repository: "file://./charts/prometheus/"
+
+  - name: grafana
+    version: 0.0.37
+    condition: grafana.enabled
+    repository: "file://./charts/grafana/"
+
+  - name: exporter-kube-state
+    version: 0.2.7
+    condition: deployKubeState
+    repository: "file://./charts/exporter-kube-state/"
+
+  - name: exporter-kubelets
+    version: 0.2.11
+    condition: exporter-kubelets.enabled
+    repository: "file://./charts/exporter-kubelets/"
+
+  - name: exporter-kubernetes
+    version: 0.1.10
+    condition: deployKubernetes
+    repository: "file://./charts/exporter-kubernetes/"
+
+  - name: exporter-node
+    version: 0.4.7
+    condition: deployNodeExporter
+    repository: "file://./charts/exporter-node/"
