@@ -1,0 +1,27 @@
+{{- if .Values.operator.rbacEnable }}
+{{- if .Values.operator.pspEnable }}
+{{- if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1beta1" }}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+{{- else if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1alpha1" }}
+apiVersion: rbac.authorization.k8s.io/v1alpha1
+{{- else }}
+apiVersion: rbac.authorization.k8s.io/v1
+{{- end }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: {{ template "prometheus-operator.name" . }}
+    chart: {{ template "prometheus-operator.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "prometheus-operator.psp.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "prometheus-operator.psp.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "prometheus-operator.fullname" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- end }}

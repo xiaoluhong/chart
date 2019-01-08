@@ -1,0 +1,24 @@
+{{- if and .Values.enabled (or .Values.enabledDefaultPrometheusRules .Values.prometheusRule) }}
+apiVersion: {{ template "prometheus-operator.apiVersion" . }}
+kind: PrometheusRule
+metadata:
+  labels:
+    app: {{ template "prometheus.name" . }}
+    chart: {{ template "prometheus.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    {{- if .Values.additionalRulesLabels }}
+{{ toYaml .Values.additionalRulesLabels | indent 4 }}
+    {{- else if .Values.additionalRulesConfigMapLabels }}       # Deprecated for .Values.additionalRulesLabels
+{{ toYaml .Values.additionalRulesConfigMapLabels | indent 4 }}  # Deprecated for .Values.additionalRulesLabels
+    {{- end }}
+  name: {{ template "prometheus.fullname" . }}
+spec:
+  groups:
+{{ if .Values.enabledDefaultPrometheusRules }}
+{{- include "prometheus.rules.yaml.tpl" . | indent 2 }}
+{{ end }}
+{{ if .Values.prometheusRules }}
+{{- toYaml .Values.prometheusRules | indent 2 }}
+{{ end }}
+{{- end }}

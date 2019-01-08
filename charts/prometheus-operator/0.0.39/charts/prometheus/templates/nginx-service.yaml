@@ -1,0 +1,24 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "prometheus.nginx.dnsname" . }}
+  labels:
+    app: {{ template "prometheus.name" . }}
+    chart: {{ template "prometheus.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    kubernetes.io/cluster-service: "true"
+spec:
+  # set the service type to NodePort, using the k8s cluster proxy will encounter a UI bug 
+  # https://github.com/prometheus/prometheus/issues/1583
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: {{ template "prometheus.name" . }}
+    release: {{ .Release.Name }}
+    component: nginx
+{{- end }}

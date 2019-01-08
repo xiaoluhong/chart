@@ -1,0 +1,8 @@
+apiVersion: v1
+description: A Helm chart singleton for kube-state-metrics
+name: exporter-kube-state
+appVersion: "v2.3.2"
+version: 0.2.7
+maintainers:
+  - name: Giancarlo Rubio
+    email: gianrubio@gmail.com

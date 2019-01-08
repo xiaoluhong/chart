@@ -1,12 +1,12 @@
 apiVersion: v1
-description: add toleration for operator; all in 30; grafana selected; add nodeselecter; change bool to string; Provides easy monitoring definitions for Kubernetes services, and deployment and management of Prometheus instances.
+description: actually 30-201810101556 Provides easy monitoring definitions for Kubernetes services, and deployment and management of Prometheus instances.
 engine: gotpl
 maintainers:
   - name: gianrubio
 name: prometheus-operator
 sources:
   - https://github.com/coreos/prometheus-operator
-version: 0.0.38
+version: 0.0.32
 appVersion: "0.23.2"
 home: https://github.com/coreos/prometheus-operator
 keywords:

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ template "prometheus-operator.name" . }}
+    chart: {{ template "prometheus-operator.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "prometheus-operator.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "prometheus-operator.name" . }}
+      chart: {{ template "prometheus-operator.version" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "prometheus-operator.name" . }}
+        chart: {{ template "prometheus-operator.version" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: prometheus-operator
+          image: "{{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}"
+          imagePullPolicy: "{{ .Values.operator.image.pullPolicy }}"
+          args:
+          {{- if .Values.operator.kubeletService.enable }}
+            - --kubelet-service={{ .Values.operator.kubeletService.namespace }}/{{ .Values.operator.kubeletService.name }}
+          {{- end }}
+          {{- if .Values.operator.logFormat }}
+            - --log-format= {{ .Values.operator.logFormat }}
+          {{- end }}
+            - --prometheus-config-reloader={{ .Values.operator.prometheusConfigReloader.repository }}:{{ .Values.operator.prometheusConfigReloader.tag }}
+            - --config-reloader-image={{ .Values.operator.configmapReload.repository }}:{{ .Values.operator.configmapReload.tag }}
+            - --crd-apigroup={{ template "prometheus-operator.apiGroup" . }}
+          ports:
+            - containerPort: 8080
+              name: http
+          resources:
+{{ toYaml .Values.operator.resources | indent 12 }}
+    {{- if .Values.operator.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.operator.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if .Values.operator.rbacEnable }}
+      serviceAccountName: {{ template "prometheus-operator.fullname" . }}
+    {{- end }}
+    {{- if .Values.operator.tolerations }}
+      tolerations:
+{{ toYaml .Values.operator.tolerations | indent 8 }}
+    {{- end }}
